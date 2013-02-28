@@ -1,12 +1,14 @@
 <?php
 
-require('../Template.php');
+date_default_timezone_set('America/Toronto');
 
-// Set the path to the templates (if using MVC this should be called "view")
-Template::$path = __DIR__ . '/view/';
+require('../view.php');
+
+// Set the path to the views
+View::setViewPath(__DIR__ . '/views/');
 
 // Load the page template
-$template = new Template('page');
-$template->title('Home - Example Site');
+$view = new View('page');
+$view->title('Home - Example Site');
 
-print $template;
+$view->render();

@@ -179,9 +179,38 @@ class View
 	public function load($view)
 	{
 		ob_start();
+
 		extract((array) $this);
 		require self::$viewPath . $view . '.php';
+
+		$definedVars = get_defined_vars();
+		$this->populateProperties($definedVars);
+
 		return ob_get_clean();
+	}
+
+	/**
+	 * This is a helper method that takes variables defined in the 
+	 * local scope of the load method and sets them as properties of the
+	 * View object instance. This is provided purely for convenience.
+	 *
+	 * In essence this allows us to, within a view, set values to be used in
+	 * a parent view like so:
+	 * 		$value = 'Hello, world!';
+	 * rather than like so:
+	 * 		$this->value = 'Hello, world!';
+	 * 		
+	 * @param  array 	$definedVars
+	 * @return void
+	 */
+	public function populateProperties($definedVars)
+	{
+		foreach($definedVars as $key => $value) {
+			// Filter values we don't want to set as properties
+			if ( ! in_array($key, array('this', 'view'))){
+				$this->{$key} = $value;
+			}
+		}
 	}
 
 	/**
